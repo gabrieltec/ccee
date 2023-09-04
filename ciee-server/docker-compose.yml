@@ -1,0 +1,29 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres_container
+    environment:
+      POSTGRES_USER: gabriel
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: ciee
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+
+  app:
+    image: openjdk:17
+    container_name: java_app_container
+    volumes:
+      - ./:/app
+    working_dir: /app
+    command: ["java", "-jar", "ciee.jar"]
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
