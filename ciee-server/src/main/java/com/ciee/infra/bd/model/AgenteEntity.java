@@ -1,5 +1,6 @@
 package com.ciee.infra.bd.model;
 
+import com.ciee.domain.dto.Metadata;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,17 +13,17 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "agente")
-public class Agente {
+public class AgenteEntity extends Metadata {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int codigo;
+    private Integer codigo;
     private String data;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "agente")
-    private List<Regiao> regiao;
+    private List<RegiaoEntity> regiao;
 
 }
 

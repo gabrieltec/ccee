@@ -1,5 +1,6 @@
 package com.ciee.domain.entities;
 
+import com.ciee.domain.dto.Metadata;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @XmlRootElement(name = "regiao")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Regiao {
+public class Regiao extends Metadata {
 
     @XmlElementWrapper(name = "geracao")
     @XmlElement(name = "valor")

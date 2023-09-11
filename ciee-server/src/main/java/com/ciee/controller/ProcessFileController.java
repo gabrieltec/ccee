@@ -1,19 +1,18 @@
 package com.ciee.controller;
 
 import com.ciee.application.services.ProcessFileService;
+import com.ciee.application.util.ProcessXML;
 import com.ciee.domain.entities.Agente;
-import com.ciee.domain.entities.Agentes;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.xml.bind.JAXBContext;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import java.io.StringReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Validated
@@ -21,50 +20,31 @@ import java.util.List;
 @RequestMapping("api/v1/agente")
 public class ProcessFileController {
 
-    @Autowired
-    ProcessFileService processFileService;
+    private final ProcessFileService processFileService;
+    private final ProcessXML processXML;
 
+    @Autowired
+    public ProcessFileController(ProcessFileService processFileService, ProcessXML processXML) {
+        this.processFileService = processFileService;
+        this.processXML = processXML;
+    }
 
     @PostMapping("/upload")
-    public void handleFileUpload(@RequestParam("file") MultipartFile file) throws IOException {
-        if (!file.isEmpty()) {
-            try {
-                List<Agente> processedData = processXML(file.getBytes());
-                processFileService.saveAll(processedData);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+    public ResponseEntity<?> handleFileUpload(@RequestParam("file") @Valid @NotNull MultipartFile file) throws IOException, JAXBException {
+        List<Agente> processedData = this.processXML.xmlToDto(file.getBytes());
+        processFileService.saveAll(processedData);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/consolidated/{region}")
-    public Agente getConsolidatedData(@PathVariable String region) {
-        return processFileService.getConsolidatedDataByRegion(region);
+    public ResponseEntity<Agente> getConsolidatedData(@PathVariable String region) {
+        return ResponseEntity.ok(processFileService.getConsolidatedDataByRegion(region));
     }
 
     @GetMapping("")
-    public List<Agente> findAll() {
-        return processFileService.findAll();
+    public ResponseEntity<List<Agente>> findAll() {
+        return ResponseEntity.ok(processFileService.findAll());
     }
 
-    private List<Agente> processXML(byte[] xmlData) throws JAXBException {
-        try {
-            JAXBContext context = JAXBContext.newInstance(Agentes.class);
-            Unmarshaller unmarshaller = context.createUnmarshaller();
-
-            String xmlString = new String(xmlData, StandardCharsets.UTF_8);
-
-            StringReader reader = new StringReader(xmlString);
-            Agentes agentes = (Agentes) unmarshaller.unmarshal(reader);
-
-            List<Agente> agenteList = agentes.getAgente();
-
-            return agenteList;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new JAXBException("Erro ao processar o XML: " + e.getMessage());
-        }
-    }
 
 }

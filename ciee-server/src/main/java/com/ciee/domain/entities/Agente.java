@@ -1,5 +1,6 @@
 package com.ciee.domain.entities;
 
+import com.ciee.domain.dto.Metadata;
 import lombok.*;
 
 import javax.xml.bind.annotation.*;
@@ -11,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Agente {
+public class Agente extends Metadata {
 
     @XmlElement(name = "codigo")
     private int codigo;

@@ -1,6 +1,6 @@
 package com.ciee.infra.bd;
 
-import com.ciee.infra.bd.model.Agente;
+import com.ciee.infra.bd.model.AgenteEntity;
 import com.ciee.infra.bd.repository.AgenteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -10,18 +10,22 @@ import java.util.List;
 @Repository
 public class AgentesBD {
 
-    @Autowired
-    AgenteRepository agenteRepository;
+    private final AgenteRepository agenteRepository;
 
-    public void saveAll(List<Agente> agentes) {
+    @Autowired
+    public AgentesBD(AgenteRepository agenteRepository) {
+        this.agenteRepository = agenteRepository;
+    }
+
+    public void saveAll(List<AgenteEntity> agentes) {
         this.agenteRepository.saveAll(agentes);
     }
 
-    public Agente getConsolidatedDataByRegion(String idCountry) {
+    public AgenteEntity getConsolidatedDataByRegion(String idCountry) {
         return this.agenteRepository.findByCodigo(Integer.parseInt(idCountry));
     }
 
-    public List<Agente> findAll() {
+    public List<AgenteEntity> findAll() {
         return this.agenteRepository.findAll();
     }
 }
